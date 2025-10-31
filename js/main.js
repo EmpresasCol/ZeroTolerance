@@ -1,4 +1,4 @@
-// Manejo del checkbox de anónimo
+// Handle anonymous checkbox
 const anonimoCheck = document.getElementById('anonimo');
 const datosPersonales = document.getElementById('datosPersonales');
 
@@ -14,20 +14,20 @@ anonimoCheck.addEventListener('change', function() {
     }
 });
 
-// Manejo del formulario
+// Form handling
 const form = document.getElementById('denunciaForm');
 const mensaje = document.getElementById('mensaje');
 
 form.addEventListener('submit', async function(e) {
     e.preventDefault();
     
-    // Recopilar datos
+    // Collect data
     const esAnonimo = document.getElementById('anonimo').checked;
     const datos = {
         id: 'REP-' + Date.now(),
-        fecha_reporte: new Date().toLocaleString('es-CO'),
+        fecha_reporte: new Date().toLocaleString('en-US'),
         anonimo: esAnonimo,
-        nombre: esAnonimo ? 'Anónimo' : document.getElementById('nombre').value,
+        nombre: esAnonimo ? 'Anonymous' : document.getElementById('nombre').value,
         email: esAnonimo ? '' : document.getElementById('email').value,
         tipo_acoso: document.getElementById('tipoAcoso').value,
         fecha_incidente: document.getElementById('fecha').value,
@@ -35,20 +35,20 @@ form.addEventListener('submit', async function(e) {
         descripcion: document.getElementById('descripcion').value
     };
     
-    // Validar
+    // Validate
     if (!datos.tipo_acoso || !datos.descripcion) {
-        mostrarMensaje('Por favor completa los campos obligatorios', 'error');
+        mostrarMensaje('Please complete the required fields', 'error');
         return;
     }
     
     if (datos.descripcion.length < 20) {
-        mostrarMensaje('La descripción debe tener al menos 20 caracteres', 'error');
+        mostrarMensaje('Description must be at least 20 characters', 'error');
         return;
     }
     
     try {
-        // Guardar en JSON mediante PHP
-        const response = await fetch('guardar.php', {
+        // Save to JSON via PHP
+        const response = await fetch('save.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -60,20 +60,20 @@ form.addEventListener('submit', async function(e) {
         
         if (resultado.success) {
             mostrarMensaje(
-                `✅ Reporte enviado exitosamente.<br>
-                ID de seguimiento: <strong>${datos.id}</strong><br>
-                Guarda este ID para hacer seguimiento.`,
+                `✅ Report submitted successfully.<br>
+                Tracking ID: <strong>${datos.id}</strong><br>
+                Save this ID for follow-up.`,
                 'success'
             );
             form.reset();
             
-            // Scroll al mensaje
+            // Scroll to message
             mensaje.scrollIntoView({ behavior: 'smooth', block: 'center' });
         } else {
-            mostrarMensaje('❌ Error al enviar el reporte. Intenta nuevamente.', 'error');
+            mostrarMensaje('❌ Error submitting report. Please try again.', 'error');
         }
     } catch (error) {
-        mostrarMensaje('❌ Error de conexión. Verifica tu conexión a internet.', 'error');
+        mostrarMensaje('❌ Connection error. Check your internet connection.', 'error');
     }
 });
 
@@ -87,7 +87,7 @@ function mostrarMensaje(texto, tipo) {
     }, 8000);
 }
 
-// Smooth scroll para enlaces
+// Smooth scroll for links
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function(e) {
         e.preventDefault();
@@ -98,7 +98,7 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
 });
 
-// Contador de checklist
+// Checklist counter
 const checkboxes = document.querySelectorAll('.check-item input');
 checkboxes.forEach(checkbox => {
     checkbox.addEventListener('change', function() {
@@ -109,10 +109,10 @@ checkboxes.forEach(checkbox => {
             alert.style.background = '#fee2e2';
             alert.style.borderColor = '#ef4444';
             alert.innerHTML = `
-                ⚠️ <strong>Has identificado ${checked} señales.</strong><br>
-                Considera buscar apoyo. No estás solo/a.
+                ⚠️ <strong>You've identified ${checked} warning signs.</strong><br>
+                Consider seeking support. You're not alone.
                 <a href="#denuncia" style="color: #991b1b; text-decoration: underline; font-weight: bold;">
-                    Reportar ahora
+                    Report now
                 </a>
             `;
         }

@@ -1,50 +1,50 @@
 <?php
 header('Content-Type: application/json');
 
-// Directorio para guardar reportes
+// Directory to save reports
 $dir = __DIR__ . '/data/reportes/';
 
-// Crear directorio si no existe
+// Create directory if it doesn't exist
 if (!file_exists($dir)) {
     mkdir($dir, 0755, true);
 }
 
-// Leer datos del POST
+// Read POST data
 $json = file_get_contents('php://input');
 $datos = json_decode($json, true);
 
-// Validar datos básicos
+// Validate basic data
 if (!$datos || !isset($datos['id']) || !isset($datos['descripcion'])) {
-    echo json_encode(['success' => false, 'error' => 'Datos incompletos']);
+    echo json_encode(['success' => false, 'error' => 'Incomplete data']);
     exit;
 }
 
-// Sanitizar datos
+// Sanitize data
 $reporte = [
     'id' => htmlspecialchars($datos['id']),
     'fecha_reporte' => htmlspecialchars($datos['fecha_reporte']),
     'anonimo' => $datos['anonimo'] ? true : false,
-    'nombre' => htmlspecialchars($datos['nombre'] ?? 'Anónimo'),
+    'nombre' => htmlspecialchars($datos['nombre'] ?? 'Anonymous'),
     'email' => filter_var($datos['email'] ?? '', FILTER_SANITIZE_EMAIL),
     'tipo_acoso' => htmlspecialchars($datos['tipo_acoso']),
     'fecha_incidente' => htmlspecialchars($datos['fecha_incidente'] ?? ''),
     'lugar' => htmlspecialchars($datos['lugar'] ?? ''),
     'descripcion' => htmlspecialchars($datos['descripcion']),
-    'ip' => $_SERVER['REMOTE_ADDR'] ?? 'desconocida',
+    'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown',
     'timestamp' => time()
 ];
 
-// Guardar en archivo JSON
+// Save to JSON file
 $archivo = $dir . $reporte['id'] . '.json';
 $resultado = file_put_contents($archivo, json_encode($reporte, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
 
 if ($resultado !== false) {
-    // Log simple
-    $log = date('Y-m-d H:i:s') . " - Reporte guardado: " . $reporte['id'] . "\n";
+    // Simple log
+    $log = date('Y-m-d H:i:s') . " - Report saved: " . $reporte['id'] . "\n";
     file_put_contents(__DIR__ . '/data/log.txt', $log, FILE_APPEND);
     
     echo json_encode(['success' => true, 'id' => $reporte['id']]);
 } else {
-    echo json_encode(['success' => false, 'error' => 'Error al guardar']);
+    echo json_encode(['success' => false, 'error' => 'Error saving report']);
 }
 ?>
