@@ -1,0 +1,16 @@
+# Proteger directorio data/
+<Files ~ "\.json$">
+    Order allow,deny
+    Deny from all
+</Files>
+
+# Bloquear acceso a archivos de log
+<Files "log.txt">
+    Order allow,deny
+    Deny from all
+</Files>
+
+# Habilitar HTTPS (descomentar en producción)
+# RewriteEngine On
+# RewriteCond %{HTTPS} off
+# RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
